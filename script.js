@@ -15,7 +15,7 @@ function createGrid() {
     cell.className = 'grid-cell';
     // Add the can image to every cell
     const img = document.createElement('img');
-    img.src = 'images/yellow-can.png';
+    img.src = 'images/water-can.png'; // Path to the water can image
     img.alt = 'Yellow Jerry Can';
     img.className = 'jerry-can-img water-can-img';
     img.style.visibility = 'hidden'; // Hide by default
@@ -34,9 +34,9 @@ function spawnWaterCan() {
   // Hide all cans and remove previous click handlers
   cells.forEach(cell => {
     const img = cell.querySelector('.water-can-img');
-    img.style.visibility = 'hidden';
-    // Remove all previous event listeners by cloning the node
+    // Remove all previous event listeners by replacing with a clone
     const newImg = img.cloneNode(true);
+    newImg.style.visibility = 'hidden';
     cell.replaceChild(newImg, img);
   });
 
@@ -58,6 +58,7 @@ function spawnWaterCan() {
     if (currentCans >= GOAL_CANS) {
       endGame();
       document.getElementById('feedback').textContent = "Congratulations! You collected enough cans!";
+      showConfetti();
     }
   };
 }
@@ -100,5 +101,93 @@ function endGame() {
   document.getElementById('feedback').textContent = "Time's up! Game over.";
 }
 
+function showConfetti() {
+  // Create canvas
+  const canvas = document.createElement('canvas');
+  canvas.id = 'confetti-canvas';
+  canvas.style.position = 'fixed';
+  canvas.style.top = 0;
+  canvas.style.left = 0;
+  canvas.style.pointerEvents = 'none';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const confettiCount = 120;
+  const confetti = [];
+
+  for (let i = 0; i < confettiCount; i++) {
+    confetti.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * confettiCount,
+      color: `hsl(${Math.floor(Math.random() * 360)},90%,60%)`,
+      tilt: Math.random() * 10 - 10,
+      tiltAngleIncremental: (Math.random() * 0.07) + .05,
+      tiltAngle: 0
+    });
+  }
+
+  let angle = 0;
+  let tiltAngle = 0;
+
+  function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    angle += 0.01;
+    tiltAngle += 0.1;
+
+    for (let i = 0; i < confetti.length; i++) {
+      let c = confetti[i];
+      c.tiltAngle += c.tiltAngleIncremental;
+      c.y += (Math.cos(angle + c.d) + 3 + c.r / 2) / 2;
+      c.x += Math.sin(angle);
+      c.tilt = Math.sin(c.tiltAngle - (i % 3)) * 15;
+
+      ctx.beginPath();
+      ctx.lineWidth = c.r;
+      ctx.strokeStyle = c.color;
+      ctx.moveTo(c.x + c.tilt + c.r / 3, c.y);
+      ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 5);
+      ctx.stroke();
+    }
+  }
+
+  let animationFrame;
+  function animateConfetti() {
+    drawConfetti();
+    animationFrame = requestAnimationFrame(animateConfetti);
+  }
+  animateConfetti();
+
+  // Remove confetti after 2.5 seconds
+  setTimeout(() => {
+    cancelAnimationFrame(animationFrame);
+    if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+  }, 2500);
+}
+
+// Add this function to reset the game state and UI
+function resetGame() {
+  gameActive = false;
+  clearInterval(spawnInterval);
+  clearInterval(timerInterval);
+  currentCans = 0;
+  timer = 30;
+  document.getElementById('current-cans').textContent = currentCans;
+  document.getElementById('timer').textContent = timer;
+  document.getElementById('feedback').textContent = "";
+  document.getElementById('achievements').textContent = "";
+  createGrid();
+}
+
 // Set up click handler for the start button
 document.getElementById('start-game').addEventListener('click', startGame);
+
+// Optionally, add a reset button and handler
+// Example: Add this after your start button in index.html
+// <button id="reset-game">Reset Game</button>
+
+// Add event listener for reset button
+document.getElementById('reset-game')?.addEventListener('click', resetGame);
