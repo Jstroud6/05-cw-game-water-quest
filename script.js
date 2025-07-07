@@ -3,6 +3,8 @@ const GOAL_CANS = 25;        // Total items needed to collect
 let currentCans = 0;         // Current number of items collected
 let gameActive = false;      // Tracks if game is currently running
 let spawnInterval;          // Holds the interval for spawning items
+let timer = 30;              // Timer in seconds
+let timerInterval;           // Holds the interval for the timer
 
 // Creates the 3x3 game grid where items will appear
 function createGrid() {
@@ -37,17 +39,38 @@ function spawnWaterCan() {
   `;
 }
 
+function updateTimerDisplay() {
+  document.getElementById('timer').textContent = timer;
+}
+
+function startTimer() {
+  timer = 30;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timer--;
+    updateTimerDisplay();
+    if (timer <= 0) {
+      endGame();
+    }
+  }, 1000);
+}
+
 // Initializes and starts a new game
 function startGame() {
   if (gameActive) return; // Prevent starting a new game if one is already active
   gameActive = true;
   createGrid(); // Set up the game grid
   spawnInterval = setInterval(spawnWaterCan, 1000); // Spawn water cans every second
+  startTimer(); // Start the countdown timer
+  document.getElementById('feedback').textContent = ""; // Clear feedback
 }
 
 function endGame() {
   gameActive = false; // Mark the game as inactive
   clearInterval(spawnInterval); // Stop spawning water cans
+  clearInterval(timerInterval); // Stop the timer
+  // Optionally, show feedback to the user
+  document.getElementById('feedback').textContent = "Time's up! Game over.";
 }
 
 // Set up click handler for the start button
