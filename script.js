@@ -15,7 +15,7 @@ function createGrid() {
     cell.className = 'grid-cell';
     // Add the can image to every cell
     const img = document.createElement('img');
-    img.src = 'images/water-can.png'; // Path to the water can image
+    img.src = 'images/water-can-transparent.png'; // Path to the water can image
     img.alt = 'Yellow Jerry Can';
     img.className = 'jerry-can-img water-can-img';
     img.style.visibility = 'hidden'; // Hide by default
