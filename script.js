@@ -24,7 +24,6 @@ createGrid();
 function spawnWaterCan() {
   if (!gameActive) return; // Stop if the game is not active
   const cells = document.querySelectorAll('.grid-cell');
-  
   // Clear all cells before spawning a new water can
   cells.forEach(cell => (cell.innerHTML = ''));
 
@@ -37,6 +36,27 @@ function spawnWaterCan() {
       <div class="water-can"></div>
     </div>
   `;
+
+  // Add click handler for the water can
+  const can = randomCell.querySelector('.water-can');
+  can.addEventListener('click', function (e) {
+    if (!gameActive) return;
+    // Visual feedback: animate cell
+    randomCell.classList.add('collected');
+    setTimeout(() => randomCell.classList.remove('collected'), 400);
+    // Remove can after click
+    can.style.visibility = 'hidden';
+    // Update score
+    currentCans++;
+    document.getElementById('current-cans').textContent = currentCans;
+    // Optional: feedback
+    document.getElementById('feedback').textContent = "Nice! +1 can";
+    // Check for win
+    if (currentCans >= GOAL_CANS) {
+      endGame();
+      document.getElementById('feedback').textContent = "Congratulations! You collected enough cans!";
+    }
+  });
 }
 
 function updateTimerDisplay() {

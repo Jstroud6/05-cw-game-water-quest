@@ -23,7 +23,7 @@ Fonts:
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Nunito', Arial, sans-serif;
   margin: 0;
   padding: 30px;
   /* Water gradient blue background */
@@ -38,33 +38,64 @@ body {
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 h1 {
+  font-family: 'Bungee', cursive;
   text-align: center;
-  font-size: 30px;
+  font-size: 3rem;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #333;
+  color: #FFC907;
+  letter-spacing: 2px;
+  text-shadow: 2px 4px 0 #2E9DF7, 0 2px 12px #8BD1CB88;
+  transition: 
+    color 0.2s,
+    text-shadow 0.2s,
+    transform 0.2s;
+  cursor: pointer;
+  user-select: none;
 }
 
-h1 img {
-  height: 50px;
-  margin-right: 15px;
-  display: block;
+h1:hover, h1:focus {
+  color: #2E9DF7;
+  text-shadow: 2px 4px 0 #FFC907, 0 2px 16px #2E9DF7cc;
+  transform: scale(1.07) rotate(-2deg);
+}
+
+h1:active {
+  color: #FF902A;
+  text-shadow: 2px 4px 0 #F5402C, 0 2px 20px #FFC907cc;
+  transform: scale(0.96) rotate(2deg);
+}
+
+h2, h3, h4, h5, h6 {
+  font-family: 'Bungee', cursive;
 }
 
 .game-instructions {
   font-size: 18px;
   margin-bottom: 30px;
   text-align: center;
+  color: #2E9DF7;
+  background: linear-gradient(90deg, #FFF7D1 60%, #FFC907 100%);
+  border-radius: 6px;
+  padding: 8px 0;
+  font-weight: 700;
+  box-shadow: 0 2px 8px #FFC90722;
 }
 
 .stats {
   display: flex;
   justify-content: space-around;
   margin-bottom: 30px;
-  background-color: #f5f5f5;
+  background: linear-gradient(90deg, #8BD1CB 60%, #2E9DF7 100%);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px #2E9DF722;
   padding: 15px 0;
   border-radius: 8px;
 }
@@ -76,12 +107,51 @@ h1 img {
   color: #333;
 }
 
+.stats span {
+  color: #fff;
+  text-shadow: 1px 1px 0 #2E9DF7, 0 1px 6px #159A4833;
+}
+
+#current-cans {
+  color: #FFC907;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 #2E9DF7, 0 1px 6px #FFC90755;
+  font-size: 1.3em;
+}
+
+#timer {
+  color: #F5402C;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 #FFC907, 0 1px 6px #F5402C55;
+  font-size: 1.3em;
+}
+
+.feedback {
+  color: #4FCB53;
+  font-weight: bold;
+  text-align: center;
+  margin: 10px 0 0 0;
+  min-height: 24px;
+  font-size: 1.1em;
+  text-shadow: 1px 1px 0 #fff, 0 1px 6px #4FCB5355;
+}
+
+.achievement {
+  color: #FF902A;
+  font-weight: bold;
+  text-align: center;
+  margin: 8px 0 0 0;
+  font-size: 1.1em;
+  text-shadow: 1px 1px 0 #fff, 0 1px 6px #FF902A55;
+}
+
 .game-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 15px;
   margin: 0 auto;
   max-width: 500px;
+  width: 100%;
 }
 
 .grid-cell {
@@ -92,21 +162,21 @@ h1 img {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, box-shadow 0.2s;
   position: relative;
   overflow: hidden;
 }
 
-.water-can-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 70px;
-  height: 70px;
-  /* Ensure the wrapper is properly centered */
+.grid-cell:hover {
+  background-color: #d0f0ff;
+  box-shadow: 0 0 8px #2E9DF733;
 }
 
+.grid-cell:active {
+  background-color: #b3e6ff;
+}
+
+/* Water can hover and click feedback */
 .water-can {
   width: 100%;
   height: 100%;
@@ -118,6 +188,19 @@ h1 img {
   border-radius: 50%;
   animation: popUp 0.5s cubic-bezier(0.17, 0.67, 0.34, 2);
   transform-origin: center; /* Ensure scaling happens from the center */
+  transition: box-shadow 0.2s, transform 0.1s;
+}
+
+.water-can:hover {
+  box-shadow: 0 0 16px 4px #FFC90788, 0 2px 8px #2E9DF755;
+  transform: scale(1.08) rotate(-5deg);
+  background-color: #fffbe6;
+}
+
+.water-can:active {
+  animation: clickPop 0.2s;
+  box-shadow: 0 0 24px 8px #FFC907cc;
+  transform: scale(0.92) rotate(3deg);
 }
 
 @keyframes popUp {
@@ -129,7 +212,26 @@ h1 img {
   }
 }
 
+@keyframes clickPop {
+  0% { transform: scale(1.08) rotate(-5deg);}
+  50% { transform: scale(1.2) rotate(0deg);}
+  100% { transform: scale(0.92) rotate(3deg);}
+}
+
+/* Feedback animation for collecting a can */
+.grid-cell.collected {
+  animation: collectedFlash 0.4s;
+  background-color: #FFF7D1 !important;
+}
+@keyframes collectedFlash {
+  0% { background-color: #FFF7D1; }
+  50% { background-color: #FFC907; }
+  100% { background-color: #FFF7D1; }
+}
+
+/* Button styles */
 button {
+  font-family: 'Nunito', Arial, sans-serif;
   background-color: #4CAF50;
   color: white;
   border: none;
@@ -140,6 +242,20 @@ button {
   display: block;
   margin: 30px auto 0;
   transition: background-color 0.2s;
+  outline: none;
+}
+
+button:hover,
+button:focus {
+  background-color: #2E9DF7;
+  color: #fff;
+  box-shadow: 0 0 0 3px #8BD1CB55;
+}
+
+button:active {
+  background-color: #FFC907;
+  color: #333;
+  transform: scale(0.97);
 }
 
 .jerry-can-img {
@@ -149,4 +265,44 @@ button {
   margin: 0 auto;
   /* Optional: add a drop shadow for effect */
   filter: drop-shadow(0 2px 6px rgba(46,157,247,0.3));
+}
+
+/* Responsive design for mobile */
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+    max-width: 100vw;
+    border-radius: 0;
+  }
+  .game-grid {
+    gap: 8px;
+    max-width: 98vw;
+  }
+  .grid-cell {
+    min-width: 60px;
+    min-height: 60px;
+    aspect-ratio: 1;
+  }
+  .water-can-wrapper {
+    width: 45px;
+    height: 45px;
+  }
+  .jerry-can-img {
+    width: 40px;
+    height: 40px;
+  }
+  .stats {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 16px;
+    padding: 8px 0;
+  }
+  .game-instructions {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+  button {
+    font-size: 15px;
+    padding: 10px 16px;
+  }
 }
